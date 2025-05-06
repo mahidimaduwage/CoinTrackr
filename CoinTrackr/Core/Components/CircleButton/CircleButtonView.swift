@@ -28,14 +28,14 @@ struct CircleButtonView: View {
     }
 }
 
-#Preview(traits: .sizeThatFitsLayout) {
-    Group {
-        CircleButtonView(iconName: "info")
-            .padding()
-        
-        CircleButtonView(iconName: "plus")
-            .padding()
-            .colorScheme(.dark)
-    }
-
-}
+//#Preview(traits: .sizeThatFitsLayout) {
+//    Group {
+//        CircleButtonView(iconName: "info")
+//            .padding()
+//        
+//        CircleButtonView(iconName: "plus")
+//            .padding()
+//            .colorScheme(.dark)
+//    }
+//
+//}
