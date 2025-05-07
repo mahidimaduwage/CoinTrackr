@@ -2,7 +2,7 @@
 //  CoinDetailModel.swift
 //  CoinTrackr
 //
-//  Created by Shaumya on 2025-05-07.
+//  Created by Shaumya on 2025-05-05.
 //
 
 import Foundation
