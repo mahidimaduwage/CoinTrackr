@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+// Used to enhance user experience during key interactions like saving, errors, or updates.
 class HapticManager {
     
     static private let generator = UINotificationFeedbackGenerator()

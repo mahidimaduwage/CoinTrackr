@@ -7,8 +7,10 @@
 
 import SwiftUI
 
+// A reusable view that provides an animated circular stroke effect.
 struct CircleButtonAnimationView: View {
     
+    // Binding variable to control the animation state from the parent view
     @Binding var animate : Bool
     
     var body: some View {

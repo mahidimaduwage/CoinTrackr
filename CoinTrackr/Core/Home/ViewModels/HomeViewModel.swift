@@ -8,20 +8,22 @@
 import Foundation
 import Combine
 
+// Manages the state of all coins, portfolio, statistics, sorting, and search logic.
 class HomeViewModel: ObservableObject {
     
-    @Published var statistics: [StatisticModel] = []
-    @Published var allCoins: [CoinModel] = []
-    @Published var portfolioCoins: [CoinModel] = []
-    @Published var isLoading: Bool = false
-    @Published var searchText: String = ""
-    @Published var sortOption: SortOption = .holdings
+    @Published var statistics: [StatisticModel] = []         // Global market + portfolio stats
+    @Published var allCoins: [CoinModel] = []                // All fetched coins
+    @Published var portfolioCoins: [CoinModel] = []          // Coins in the user's portfolio
+    @Published var isLoading: Bool = false                   // Flag for showing loading state
+    @Published var searchText: String = ""                   // Search input from user
+    @Published var sortOption: SortOption = .holdings        // Current sort option
         
     private let coinDataService = CoinDataService()
     private let marketDataService = MarketDataService()
     private let portfolioDataService = PortfolioDataService()
     private var cancellables = Set<AnyCancellable>()
     
+    // sorting Options
     enum SortOption {
         case rank, rankReversed, holdings, holdingsReversed, price, priceReversed
     }
@@ -30,9 +32,10 @@ class HomeViewModel: ObservableObject {
         addSubscribers()
     }
     
+    // Setup Combine pipelines to reactively update UI based on services & state changes
     func addSubscribers() {
         
-        // updates allCoins
+        // Filters and sorts all coins when searchText, coin list, or sort option changes
         $searchText
             .combineLatest(coinDataService.$allCoins, $sortOption)
             .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
@@ -42,7 +45,7 @@ class HomeViewModel: ObservableObject {
             }
             .store(in: &cancellables)
         
-        // updates portfolioCoins
+        // Maps allCoins to portfolioCoins based on saved portfolio entities
         $allCoins
             .combineLatest(portfolioDataService.$savedEntities)
             .map(mapAllCoinsToPortfolioCoins)
@@ -52,8 +55,7 @@ class HomeViewModel: ObservableObject {
             }
             .store(in: &cancellables)
 
-        
-        // updates marketData
+        // Computes statistics based on latest market data and portfolio values
         marketDataService.$marketData
             .combineLatest($portfolioCoins)
             .map(mapGlobalMarketData)
@@ -65,10 +67,12 @@ class HomeViewModel: ObservableObject {
         
     }
     
+    // Updates the user's portfolio with a new coin and holding amount
     func updatePortfolio(coin: CoinModel, amount: Double) {
         portfolioDataService.updatePortfolio(coin: coin, amount: amount)
     }
     
+    // Reloads all data and triggers haptic feedback
     func reloadData() {
         isLoading = true
         coinDataService.getCoins()
@@ -76,12 +80,14 @@ class HomeViewModel: ObservableObject {
         HapticManager.notification(type: .success)
     }
     
+    // Filters by search text and applies sorting
     private func filterAndSortCoins(text: String, coins: [CoinModel], sort: SortOption) -> [CoinModel] {
         var updatedCoins = filterCoins(text: text, coins: coins)
         sortCoins(sort: sort, coins: &updatedCoins)
         return updatedCoins
     }
     
+    // Filters coins based on name, symbol, or id
     private func filterCoins(text: String, coins: [CoinModel]) -> [CoinModel] {
         guard !text.isEmpty else {
             return coins
@@ -96,6 +102,7 @@ class HomeViewModel: ObservableObject {
         }
     }
     
+    // Sorts the provided coins list in-place based on selected sort option
     private func sortCoins(sort: SortOption, coins: inout [CoinModel]) {
         switch sort {
         case .rank, .holdings:
@@ -109,8 +116,8 @@ class HomeViewModel: ObservableObject {
         }
     }
     
+    // Sorts portfolio coins based on holdings (if applicable)
     private func sortPortfolioCoinsIfNeeded(coins: [CoinModel]) -> [CoinModel] {
-        // will only sort by holdings or reversedholdings if needed
         switch sortOption {
         case .holdings:
             return coins.sorted(by: { $0.currentHoldingsValue > $1.currentHoldingsValue })
@@ -121,6 +128,7 @@ class HomeViewModel: ObservableObject {
         }
     }
     
+    // Maps all coins with corresponding portfolio entities into portfolio models
     private func mapAllCoinsToPortfolioCoins(allCoins: [CoinModel], portfolioEntities: [PortfolioEntity]) -> [CoinModel] {
         allCoins
             .compactMap { (coin) -> CoinModel? in
@@ -131,6 +139,7 @@ class HomeViewModel: ObservableObject {
             }
     }
     
+    // Combines market data and portfolio value to generate key app statistics
     private func mapGlobalMarketData(marketDataModel: MarketDataModel?, portfolioCoins: [CoinModel]) -> [StatisticModel] {
         var stats: [StatisticModel] = []
     
@@ -142,6 +151,7 @@ class HomeViewModel: ObservableObject {
         let volume = StatisticModel(title: "24h Volume", value: data.volume)
         let btcDominance = StatisticModel(title: "BTC Dominance", value: data.btcDominance)
         
+        // Compute portfolio value and estimated percentage change
         let portfolioValue =
             portfolioCoins
                 .map({ $0.currentHoldingsValue })

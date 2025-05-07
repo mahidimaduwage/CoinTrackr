@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+// Displays key statistics (e.g., market cap, volume, BTC dominance, portfolio value)
 struct HomeStatsView: View {
     
     @EnvironmentObject private var vm: HomeViewModel

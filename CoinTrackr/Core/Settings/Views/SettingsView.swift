@@ -7,8 +7,10 @@
 
 import SwiftUI
 
+// Provides information and external links for CoinTrackr, including API credits and GitHub repo.
 struct SettingsView: View {
     
+    // External URLs
     let defaultURL = URL(string: "https://www.google.com")!
     let githubURL = URL(string: "https://github.com/mahidimaduwage/CoinTrackr")!
     let coingeckoURL = URL(string: "https://www.coingecko.com")!
@@ -46,6 +48,7 @@ struct SettingsView: View {
 }
 
 extension SettingsView {
+    // CoinGecko API attribution section
     private var coinGeckoSection: some View {
         Section(header: Text("CoinGecko")) {
             VStack(alignment: .leading) {
@@ -64,6 +67,7 @@ extension SettingsView {
         }
     }
     
+    // External links related to the application
     private var applicationSection: some View {
         Section(header: Text("Application")) {
             Link("Visit Github Repo 🤙", destination: githubURL)

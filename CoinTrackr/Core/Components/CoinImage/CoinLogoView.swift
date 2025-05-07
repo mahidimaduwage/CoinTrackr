@@ -7,19 +7,25 @@
 
 import SwiftUI
 
+// A compact view to display a coin's logo, symbol, and name.
 struct CoinLogoView: View {
     
     let coin: CoinModel
     
     var body: some View {
         VStack {
+            // Coin logo image (loaded asynchronously via CoinImageView)
             CoinImageView(coin: coin)
                 .frame(width: 50, height: 50)
+            
+            // Coin symbol (e.g., BTC, ETH) in uppercase
             Text(coin.symbol.uppercased())
                 .font(.headline)
                 .foregroundColor(Color.theme.accent)
                 .lineLimit(1)
                 .minimumScaleFactor(0.5)
+            
+            // Coin full name (e.g., Bitcoin, Ethereum)
             Text(coin.name)
                 .font(.caption)
                 .foregroundColor(Color.theme.secondaryText)

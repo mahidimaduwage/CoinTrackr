@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+// The main dashboard view displaying live coin prices or user portfolio
 struct HomeView: View {
     
     @EnvironmentObject private var vm: HomeViewModel
@@ -34,6 +35,7 @@ struct HomeView: View {
                 
                 columnTitles
                 
+                // Coin list view switching based on portfolio toggle
                 if !showPortfolio {
                     allCoinsList
                         .transition(.move(edge: .leading))
@@ -57,7 +59,7 @@ struct HomeView: View {
             })
         }
         .background(
-            NavigationLink(
+            NavigationLink(         // Navigation triggered by coin tap
                 destination: DetailLoadingView(coin: $selectedCoin),
                 isActive: $showDetailView,
                 label: {
@@ -79,6 +81,7 @@ struct HomeView_Previews: PreviewProvider {
 
 extension HomeView {
     
+    // Header with info/plus button, title, and portfolio toggle
     private var homeHeader: some View {
         HStack {
             CircleButtonView(iconName: showPortfolio ? "plus" : "info")
@@ -115,6 +118,7 @@ extension HomeView {
         .padding(.horizontal)
     }
     
+    // List of all coins
     private var allCoinsList: some View {
         List {
             ForEach(vm.allCoins) { coin in
@@ -129,6 +133,7 @@ extension HomeView {
         .listStyle(PlainListStyle())
     }
     
+    // List of portfolio coins
     private var portfolioCoinsList: some View {
         List {
             ForEach(vm.portfolioCoins) { coin in
@@ -143,6 +148,7 @@ extension HomeView {
         .listStyle(PlainListStyle())
     }
     
+    // Empty portfolio message when no coins are added
     private var portfolioEmptyText: some View {
         Text("You haven't added any coins to your portfolio yet. Click the + button to get started! 🧐")
             .font(.callout)
@@ -152,11 +158,13 @@ extension HomeView {
             .padding(50)
     }
     
+    // Triggers navigation to the DetailView
     private func segue(coin: CoinModel) {
         selectedCoin = coin
         showDetailView.toggle()
     }
     
+    // Column titles with sorting controls and refresh button
     private var columnTitles: some View {
         HStack {
             HStack(spacing: 4) {
@@ -172,6 +180,8 @@ extension HomeView {
             }
             
             Spacer()
+            
+            // Sort by holdings (only in portfolio view)
             if showPortfolio {
                 HStack(spacing: 4) {
                     Text("Holdings")
@@ -186,6 +196,7 @@ extension HomeView {
                 }
             }
             
+            // Sort by price
             HStack(spacing: 4) {
                 Text("Price")
                 Image(systemName: "chevron.down")
@@ -199,7 +210,7 @@ extension HomeView {
                 }
             }
             
-            Button(action: {
+            Button(action: { // Refresh Button
                 withAnimation(.linear(duration: 2.0)) {
                     vm.reloadData()
                 }

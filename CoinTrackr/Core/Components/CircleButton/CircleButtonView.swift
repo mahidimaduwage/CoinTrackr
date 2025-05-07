@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+// A reusable circular button view that displays a system icon.
 struct CircleButtonView: View {
     
     let iconName: String

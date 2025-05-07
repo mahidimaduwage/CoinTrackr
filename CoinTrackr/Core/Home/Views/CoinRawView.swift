@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+// A reusable row view to display brief information about a coin
 struct CoinRowView: View {
         
     let coin: CoinModel
@@ -43,6 +44,7 @@ struct CoinRowView_Previews: PreviewProvider {
 
 extension CoinRowView {
     
+    // Left column: Coin rank, logo, and symbol
     private var leftColumn: some View {
         HStack(spacing: 0) {
             Text("\(coin.rank)")
@@ -58,6 +60,7 @@ extension CoinRowView {
         }
     }
     
+    // Center column: User's current holdings value and quantity (optional)
     private var centerColumn: some View {
         VStack(alignment: .trailing) {
             Text(coin.currentHoldingsValue.asCurrencyWith2Decimals())
@@ -67,6 +70,7 @@ extension CoinRowView {
         .foregroundColor(Color.theme.accent)
     }
     
+    // Right column: Coin's current price and 24h percentage change
     private var rightColumn: some View {
         VStack(alignment: .trailing) {
             Text(coin.currentPrice.asCurrencyWith6Decimals())
@@ -79,6 +83,7 @@ extension CoinRowView {
                     Color.theme.red
                 )
         }
+        // Fixed width ensures alignment across different screen sizes
         .frame(width: UIScreen.main.bounds.width / 3.5, alignment: .trailing)
     }
 }

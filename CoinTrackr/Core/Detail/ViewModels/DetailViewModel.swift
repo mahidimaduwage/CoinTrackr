@@ -8,8 +8,10 @@
 import Foundation
 import Combine
 
+// ViewModel responsible for handling logic and data transformation for the coin detail screen
 class DetailViewModel: ObservableObject {
     
+    // Published properties to update the UI in real time
     @Published var overviewStatistics: [StatisticModel] = []
     @Published var additionalStatistics: [StatisticModel] = []
     @Published var coinDescription: String? = nil
@@ -17,8 +19,8 @@ class DetailViewModel: ObservableObject {
     @Published var redditURL: String? = nil
 
     @Published var coin: CoinModel
-    private let coinDetailService: CoinDetailDataService
-    private var cancellables = Set<AnyCancellable>()
+    private let coinDetailService: CoinDetailDataService // Service to fetch detailed coin data
+    private var cancellables = Set<AnyCancellable>() // Holds Combine subscriptions
     
     init(coin: CoinModel) {
         self.coin = coin
@@ -26,8 +28,10 @@ class DetailViewModel: ObservableObject {
         self.addSubscribers()
     }
     
+    // Subscribes to updates from the coin detail data service and maps data for the UI
     private func addSubscribers() {
         
+        // Combine latest coin details and basic coin model to derive statistics
         coinDetailService.$coinDetails
             .combineLatest($coin)
             .map(mapDataToStatistics)
@@ -37,6 +41,7 @@ class DetailViewModel: ObservableObject {
             }
             .store(in: &cancellables)
         
+        // Extract coin description and related URLs for display
         coinDetailService.$coinDetails
             .sink { [weak self] (returnedCoinDetails) in
                 self?.coinDescription = returnedCoinDetails?.readableDescription
@@ -46,12 +51,14 @@ class DetailViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
+    // Maps raw data into categorized statistics for the UI
     private func mapDataToStatistics(coinDetailModel: CoinDetailModel?, coinModel: CoinModel) -> (overview: [StatisticModel], additional: [StatisticModel]) {
         let overviewArray = createOverviewArray(coinModel: coinModel)
         let additionalArray = createAdditionalArray(coinDetailModel: coinDetailModel, coinModel: coinModel)
         return (overviewArray, additionalArray)
     }
     
+    // Creates the overview statistics array (e.g., price, market cap, rank, volume)
     private func createOverviewArray(coinModel: CoinModel) -> [StatisticModel] {
         let price = coinModel.currentPrice.asCurrencyWith6Decimals()
         let pricePercentChange = coinModel.priceChangePercentage24H
@@ -73,6 +80,7 @@ class DetailViewModel: ObservableObject {
         return overviewArray
     }
     
+    // Creates the additional statistics array (e.g., 24h high/low, block time, hashing algorithm)
     private func createAdditionalArray(coinDetailModel: CoinDetailModel?, coinModel: CoinModel) -> [StatisticModel] {
         
         let high = coinModel.high24H?.asCurrencyWith6Decimals() ?? "n/a"

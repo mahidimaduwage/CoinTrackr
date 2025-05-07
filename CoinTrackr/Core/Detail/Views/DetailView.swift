@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+// Wrapper view that conditionally loads DetailView only if coin data is available
 struct DetailLoadingView: View {
     
     @Binding var coin: CoinModel?
@@ -21,16 +22,20 @@ struct DetailLoadingView: View {
     
 }
 
+// Main detail screen displaying coin chart, stats, description, and links
 struct DetailView: View {
     
     @StateObject private var vm: DetailViewModel
     @State private var showFullDescription: Bool = false
+    
+    // Layout configuration
     private let columns: [GridItem] = [
         GridItem(.flexible()),
         GridItem(.flexible()),
     ]
     private let spacing: CGFloat = 30
     
+    // Initializes the DetailView with a specific coin
     init(coin: CoinModel) {
         _vm = StateObject(wrappedValue: DetailViewModel(coin: coin))
     }
@@ -38,9 +43,11 @@ struct DetailView: View {
     var body: some View {
         ScrollView {
             VStack {
+                // Price chart view
                 ChartView(coin: vm.coin)
                     .padding(.vertical)
 
+                // Statistics and description sections
                 VStack(spacing: 20) {
                     overviewTitle
                     Divider()
@@ -77,6 +84,7 @@ struct DetailView_Previews: PreviewProvider {
 
 extension DetailView {
     
+    // Coin symbol and icon shown in the navigation bar
     private var navigationBarTrailingItems: some View {
         HStack {
             Text(vm.coin.symbol.uppercased())
@@ -87,6 +95,7 @@ extension DetailView {
         }
     }
     
+    // Section title: Overview
     private var overviewTitle: some View {
         Text("Overview")
             .font(.title)
@@ -95,6 +104,7 @@ extension DetailView {
             .frame(maxWidth: .infinity, alignment: .leading)
     }
     
+    // Section title: Additional Details
     private var additionalTitle: some View {
         Text("Additional Details")
             .font(.title)
@@ -103,6 +113,7 @@ extension DetailView {
             .frame(maxWidth: .infinity, alignment: .leading)
     }
     
+    // Coin description with expandable text
     private var descriptionSection: some View {
         ZStack {
             if let coinDescription = vm.coinDescription,
@@ -130,6 +141,7 @@ extension DetailView {
         }
     }
     
+    // Grid of overview statistics
     private var overviewGrid: some View {
         LazyVGrid(
             columns: columns,
@@ -143,6 +155,7 @@ extension DetailView {
         })
     }
     
+    // Grid of additional statistics
     private var additionalGrid: some View {
         LazyVGrid(
             columns: columns,
@@ -156,6 +169,7 @@ extension DetailView {
         })
     }
     
+    // External links
     private var websiteSection: some View {
         VStack(alignment: .leading, spacing: 20) {
             if let websiteString = vm.websiteURL,

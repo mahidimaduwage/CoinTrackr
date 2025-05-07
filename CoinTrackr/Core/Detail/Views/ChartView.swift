@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+// View responsible for displaying a 7-day price line chart for a cryptocurrency.
 struct ChartView: View {
     
     private let data: [Double]
@@ -15,7 +16,7 @@ struct ChartView: View {
     private let lineColor: Color
     private let startingDate: Date
     private let endingDate: Date
-    @State private var percentage: CGFloat = 0
+    @State private var percentage: CGFloat = 0 // Controls animation progress
     
     init(coin: CoinModel) {
         data = coin.sparklineIn7D?.price ?? []
@@ -26,7 +27,7 @@ struct ChartView: View {
         lineColor = priceChange > 0 ? Color.theme.green : Color.theme.red
         
         endingDate = Date(coinGeckoString: coin.lastUpdated ?? "")
-        startingDate = endingDate.addingTimeInterval(-7*24*60*60)
+        startingDate = endingDate.addingTimeInterval(-7*24*60*60) // Subtract 7 days
     }
     
     var body: some View {
@@ -42,6 +43,7 @@ struct ChartView: View {
         .font(.caption)
         .foregroundColor(Color.theme.secondaryText)
         .onAppear {
+            // Delayed animation to draw chart line from left to right
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                 withAnimation(.linear(duration: 2.0)) {
                     percentage = 1.0
@@ -60,6 +62,7 @@ struct ChartView_Previews: PreviewProvider {
 
 extension ChartView {
     
+    // Core chart drawing logic using Path and GeometryReader
     private var chartView: some View {
         GeometryReader { geometry in
             Path { path in
@@ -72,13 +75,13 @@ extension ChartView {
                     let yPosition = (1 - CGFloat((data[index] - minY) / yAxis)) * geometry.size.height
                     
                     if index == 0 {
-                        path.move(to: CGPoint(x: xPosition, y: yPosition))
+                        path.move(to: CGPoint(x: xPosition, y: yPosition)) // Start path
                     }
-                    path.addLine(to: CGPoint(x: xPosition, y: yPosition))
+                    path.addLine(to: CGPoint(x: xPosition, y: yPosition)) // Draw to next point
                     
                 }
             }
-            .trim(from: 0, to: percentage)
+            .trim(from: 0, to: percentage) // Animate path drawing
             .stroke(lineColor, style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
             .shadow(color: lineColor, radius: 10, x: 0.0, y: 10)
             .shadow(color: lineColor.opacity(0.5), radius: 10, x: 0.0, y: 20)
@@ -87,6 +90,7 @@ extension ChartView {
         }
     }
     
+    // Horizontal dividers to mimic grid lines in the chart background
     private var chartBackground: some View {
         VStack {
             Divider()
@@ -97,6 +101,7 @@ extension ChartView {
         }
     }
     
+    // Y-axis showing max, mid, and min values for reference
     private var chartYAxis: some View {
         VStack {
             Text(maxY.formattedWithAbbreviations())
@@ -107,11 +112,12 @@ extension ChartView {
         }
     }
     
+    // Date labels shown at the bottom of the chart
     private var chartDateLabels: some View {
         HStack {
-            Text(startingDate.asShortDateString())
+            Text(startingDate.asShortDateString()) // Start of the week
             Spacer()
-            Text(endingDate.asShortDateString())
+            Text(endingDate.asShortDateString()) // End of the week
         }
     }
 }

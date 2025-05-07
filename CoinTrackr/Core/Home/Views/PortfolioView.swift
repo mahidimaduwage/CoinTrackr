@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+// Allows the user to add/edit their cryptocurrency holdings.
 struct PortfolioView: View {
     
     @EnvironmentObject private var vm: HomeViewModel
@@ -40,6 +41,7 @@ struct PortfolioView: View {
                     trailingNavBarButtons
                 }
             })
+            // Reset selection if search is cleared
             .onChange(of: vm.searchText, perform: { value in
                 if value == "" {
                     removeSelectedCoin()
@@ -60,6 +62,7 @@ struct PortfolioView_Previews: PreviewProvider {
 
 extension PortfolioView {
     
+    // Horizontally scrollable list of coin logos
     private var coinLogoList: some View {
         ScrollView(.horizontal, showsIndicators: false, content: {
             LazyHStack(spacing: 10) {
@@ -84,6 +87,7 @@ extension PortfolioView {
         })
     }
     
+    // Updates selected coin and pre-fills holdings if already available
     private func updateSelectedCoin(coin: CoinModel) {
         selectedCoin = coin
         
@@ -95,6 +99,7 @@ extension PortfolioView {
         }
     }
     
+    // Calculates current value based on quantity and coin price
     private func getCurrentValue() -> Double {
         if let quantity = Double(quantityText) {
             return quantity * (selectedCoin?.currentPrice ?? 0)
@@ -102,6 +107,7 @@ extension PortfolioView {
         return 0
     }
     
+    // Input fields for the selected coin
     private var portfolioInputSection: some View {
         VStack(spacing: 20) {
             HStack {
@@ -129,6 +135,7 @@ extension PortfolioView {
         .font(.headline)
     }
     
+    // Save button and success checkmark icon
     private var trailingNavBarButtons: some View {
         HStack(spacing: 10) {
             Image(systemName: "checkmark")
@@ -147,6 +154,7 @@ extension PortfolioView {
         .font(.headline)
     }
     
+    // Handles save logic and shows/hides checkmark
     private func saveButtonPressed() {
 
         guard
@@ -175,6 +183,7 @@ extension PortfolioView {
         
     }
     
+    // Clears current selection and search
     private func removeSelectedCoin() {
         selectedCoin = nil
         vm.searchText = ""

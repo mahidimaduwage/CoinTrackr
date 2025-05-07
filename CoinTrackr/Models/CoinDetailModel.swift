@@ -97,6 +97,7 @@ import Foundation
  */
 
 
+// Represents detailed information about a cryptocurrency from the CoinGecko API.
 struct CoinDetailModel: Codable {
     let id, symbol, name: String?
     let blockTimeInMinutes: Int?
@@ -104,18 +105,18 @@ struct CoinDetailModel: Codable {
     let description: Description?
     let links: Links?
     
-    enum CodingKeys: String, CodingKey {
+    enum CodingKeys: String, CodingKey { // Map JSON keys to Swift property names
         case id, symbol, name, description, links
         case blockTimeInMinutes = "block_time_in_minutes"
         case hashingAlgorithm = "hashing_algorithm"
     }
     
-    var readableDescription: String? {
+    var readableDescription: String? { // Returns a cleaned, HTML-free version of the coin description.
         return description?.en?.removingHTMLOccurances
     }
 }
 
-struct Links: Codable {
+struct Links: Codable { // Contains useful URLs for the cryptocurrency such as homepage and subreddit.
     let homepage: [String]?
     let subredditURL: String?
     
@@ -125,6 +126,6 @@ struct Links: Codable {
     }
 }
 
-struct Description: Codable {
+struct Description: Codable { // Nested object containing localized coin descriptions.
     let en: String?
 }

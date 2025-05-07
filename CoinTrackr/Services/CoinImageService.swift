@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import Combine
 
+// Handles downloading and caching of coin images from URLs, using a local file manager to persist them.
 class CoinImageService {
     
     @Published var image: UIImage? = nil
@@ -25,6 +26,7 @@ class CoinImageService {
         getCoinImage()
     }
     
+    // Attempts to load the image from local storage. If unavailable, triggers a download.
     private func getCoinImage() {
         if let savedImage = fileManager.getImage(imageName: imageName, folderName: folderName) {
             image = savedImage
@@ -33,6 +35,7 @@ class CoinImageService {
         }
     }
     
+    // Downloads the coin image from the remote URL and caches it locally
     private func downloadCoinImage() {
         guard let url = URL(string: coin.image) else { return }
         

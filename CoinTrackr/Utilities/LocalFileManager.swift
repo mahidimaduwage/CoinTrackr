@@ -32,6 +32,7 @@ class LocalFileManager {
         }
     }
     
+    // Retrieves a cached image from the specified folder, if it exists.
     func getImage(imageName: String, folderName: String) -> UIImage? {
         guard
             let url = getURLForImage(imageName: imageName, folderName: folderName),
@@ -41,6 +42,7 @@ class LocalFileManager {
         return UIImage(contentsOfFile: url.path)
     }
     
+    // Creates a folder in the cache directory if it doesn’t already exist.
     private func createFolderIfNeeded(folderName: String) {
         guard let url = getURLForFolder(folderName: folderName) else { return }
         
@@ -53,6 +55,7 @@ class LocalFileManager {
         }
     }
     
+    // Gets the URL for a folder in the cache directory.
     private func getURLForFolder(folderName: String) -> URL? {
         guard let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first else {
             return nil
@@ -60,6 +63,7 @@ class LocalFileManager {
         return url.appendingPathComponent(folderName)
     }
     
+    // Constructs the full file path for an image in the given folder.
     private func getURLForImage(imageName: String, folderName: String) -> URL? {
         guard let folderURL = getURLForFolder(folderName: folderName) else {
             return nil

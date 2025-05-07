@@ -10,6 +10,7 @@ import SwiftUI
 @main
 struct CoinTrackrApp: App {
     
+    // Shared instance of the HomeViewModel accessible throughout the app
     @StateObject var vm = HomeViewModel()
     
     init() {
@@ -27,7 +28,7 @@ struct CoinTrackrApp: App {
                         .navigationBarHidden(true)
                 }
                 .navigationViewStyle(StackNavigationViewStyle())
-                .environmentObject(vm)
+                .environmentObject(vm) // Inject ViewModel into the environment
             }
         }
     }
